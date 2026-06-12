@@ -3,16 +3,19 @@ name: Build & Deploy
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:     
 
 env:
-  DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
-  IMAGE_NAME: personal-website
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/personal-website
 
-jobs:
-  # Job1: 构建并推送镜像
+jobs:  
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Checkout code
@@ -24,57 +27,47 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        continue-on-error: true   
+
+      - name: Generate metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/personal-website
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix={{branch}}-
+            type=raw,value={{date 'YYYYMMDD'}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
-          tags: ${{ env.DOCKER_USER }}/${{ env.IMAGE_NAME }}:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # Job2: 部署到服务器
+  
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 传输 compose 文件和 todo-app 到服务器
-      - name: Copy files to server
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.HOST_SERVER }}
-          port: 22
-          username: ${{ secrets.HOST_USER_NAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml, todo-app"
-          target: "/home/ubuntu/lab12-final-project"
-          strip_components: 0
-
-      # SSH 登录服务器，执行部署
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.4
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST_SERVER }}
-          port: 22
-          username: ${{ secrets.HOST_USER_NAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            cd /home/ubuntu/lab12-final-project
-            # 登录Docker Hub
-            echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-            # 停止旧容器
-            docker compose down
-            # 拉取最新镜像
+            cd /opt/lab12-final-project
             docker compose pull
-            # 后台启动所有服务
             docker compose up -d --remove-orphans
-            # 清理冗余镜像
             docker system prune -af --filter "until=24h"
+        continue-on-error: true   
