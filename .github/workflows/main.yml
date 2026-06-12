@@ -59,6 +59,22 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        
+      - name: Copy files to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.HOST_IP }}
+          port: ${{ secrets.HOST_PORT || '22' }}
+          username: ${{ secrets.HOST_USER_NAME }}
+          key: ${{ secrets.HOST_SSH_KEY }}
+          source: "docker-compose.yml, init-db"
+          target: "/root/lab12-final-project"
+          strip_components: 0
+
+
+      
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -67,7 +83,7 @@ jobs:
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_KEY }}
           script: |
-            cd /opt/lab12-final-project
+            cd /root/lab12-final-project
             docker compose pull
             docker compose up -d --remove-orphans
             docker system prune -af --filter "until=24h"
