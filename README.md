@@ -25,8 +25,8 @@
 
 | Application | URL |
 |-------------|-----|
-| Personal Website | [http://54.208.114.120:8080](http://54.208.114.120:8080) |
-| Todo App | [http://54.208.114.120:8081](http://54.208.114.120:8081) |
+| Personal Website | [http://43.155.99.37:8081](http://43.155.99.37:8081) |
+| Todo App | [http://43.155.99.37:8081](http://43.155.99.37:8081) |
 
 ---
 
@@ -36,18 +36,18 @@
 lab12-final-project/
 │
 ├── index.html               # Personal website (个人介绍网站)
-├── photo.jpg                 # Profile photo (个人照片)
+├── photo1.jpg                 # Profile photo (个人照片)
+├── photo2.jpg                 # Profile photo (个人照片)
 ├── Dockerfile                # Website Docker image (Dockerfile)
 ├── nginx.conf                # Nginx configuration
 │
-├── todo-app/                 # Open-source todo application
-│   ├── Dockerfile
-│   └── src/
+├── init-db/                 # todo
+│   └── tduck-v5.sql          # todo-sql
 │
-├── docker-compose.yml        # Docker Compose orchestration
+├── docker-compose.yaml        # Docker Compose orchestration
 │
 ├── .github/workflows/
-│   └── deploy.yml            # GitHub Actions CI/CD
+│   └── main.yml            # GitHub Actions CI/CD
 │
 └── README.md                 # This file
 ```
@@ -63,7 +63,7 @@ lab12-final-project/
 - [x] **Step 5**: Docker Compose configuration ✅
 - [x] **Step 6**: Todo application integrated ✅
 - [x] **Step 7**: Deployed both apps on AWS EC2 ✅
-- [ ] **Step 8**: Screen recording (.mp4) — *pending*
+- [x] **Step 8**: Screen recording (.mp4) ✅
 
 ---
 
@@ -71,14 +71,14 @@ lab12-final-project/
 
 ```bash
 # Clone the repository
-git clone https://github.com/fff-555-fff/lab12-final-project.git
+git clone https://github.com/3193604328/lab12-final-project.git
 
 # Start all services
-docker compose up -d
+docker-compose up -d
 
 # Check running services
-docker compose ps
+docker-compose ps
 
 # View logs
-docker compose logs -f
+docker-compose logs -f
 ```
