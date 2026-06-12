@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx-test:v1
+    image: yiguanlin/personal-website
     container_name: nginx-website
     ports:
       - "8081:8080"
