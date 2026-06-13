@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: yiguanlin/personal-website
+    image: ccr.ccs.tencentyun.com/100049770928/personal-website1
     container_name: nginx-website
     ports:
       - "8081:8080"
