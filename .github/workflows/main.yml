@@ -10,7 +10,7 @@ on:
 env:
   REGISTRY: ccr.ccs.tencentyun.com
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/personal-website1
+  IMAGE_NAME: lab12-final-project/lab12-final-project1/personal-website1
 
 jobs:  
   build-and-push:
@@ -37,7 +37,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_HUB_USERNAME }}/personal-website
+          images: ${{ env.REGISTRY }}/lab12-final-project/lab12-final-project1/personal-website1
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix={{branch}}-
