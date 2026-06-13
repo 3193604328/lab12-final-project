@@ -10,7 +10,7 @@ on:
 env:
   REGISTRY: docker.io
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  IMAGE_NAME:  ${{ secrets.DOCKER_USERNAME }}/personal-website
+  IMAGE_NAME:  ${{ secrets.DOCKER_HUB_USERNAME }}/personal-website
 jobs:  
   build-and-push:
     runs-on: ubuntu-latest
