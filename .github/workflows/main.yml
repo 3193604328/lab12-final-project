@@ -10,8 +10,7 @@ on:
 env:
   REGISTRY: ccr.ccs.tencentyun.com
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  IMAGE_NAME: lab12-final-project/lab12-final-project1/personal-website1
-
+  IMAGE_NAME: lab12-final-project/personal-website1
 jobs:  
   build-and-push:
     runs-on: ubuntu-latest
