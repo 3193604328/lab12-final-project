@@ -8,9 +8,9 @@ on:
   workflow_dispatch:     
 
 env:
-  REGISTRY: docker.io
+  REGISTRY: ccr.ccs.tencentyun.com
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/personal-website
+  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/personal-website1
 
 jobs:  
   build-and-push:
